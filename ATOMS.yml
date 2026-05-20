@@ -1,0 +1,37 @@
+      # ATOMS.yml — catalog manifest for event-atoms
+      #
+      # See https://github.com/convergent-systems-co/atoms-spec for the canonical schema this conforms to.
+
+      name: event-atoms
+      version: 0.1.0
+      spec: atoms-spec/v1
+      domain: event-atoms.com
+      ecosystem:
+        federation: xdao.co
+        redirect: event.xdao.co
+
+      purpose: |
+        Event primitives — types, schemas, channels, subscription patterns, delivery semantics — paired with Service Atoms to cover the request/response and async halves of distributed systems.
+
+      atomTypes:
+        - event-type
+- schema
+- channel
+- subscription-pattern
+- delivery-semantics
+
+      compositionType: streams
+      compositionDir: streams
+
+      ruleTypes:
+        - schema-evolution
+- delivery-guarantee
+- ordering-constraint
+
+      runtimeConsumers:
+        - universal-bus
+
+      license: Apache-2.0
+      maintainers:
+        - name: Convergent Systems
+          contact: maintainers@xdao.co

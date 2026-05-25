@@ -1,0 +1,38 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="How to use" description="How to consume event-atoms in your application.">
+  <h1>How to use event-atoms</h1>
+
+  <h2>Read the catalog over HTTPS</h2>
+  <p>Every artifact is served under stable URLs with correct content-types:</p>
+  <pre><code>curl https://event-atoms.com/exports/catalog.json
+curl https://event-atoms.com/atoms/event-type/user-created.json
+curl https://event-atoms.com/streams/user-lifecycle.json
+curl https://event-atoms.com/schemas/composition-v1.json</code></pre>
+
+  <h2>Resolve an event stream</h2>
+  <p>A stream composition lists references to atoms by URI and version. To instantiate the stream,
+  fetch each referenced atom and assemble: event type → schema → channel → subscription pattern → delivery semantics.</p>
+
+  <pre><code>{`// pseudo-code
+const composition = await fetch("/streams/user-lifecycle.json").then(r => r.json());
+const refs = composition.references;
+const eventType = await fetch(uriToUrl(refs.event_type.ref)).then(r => r.json());
+const schema = await fetch(uriToUrl(refs.schema.ref)).then(r => r.json());
+const channel = await fetch(uriToUrl(refs.channel.ref)).then(r => r.json());
+const subscriptionPattern = await fetch(uriToUrl(refs.subscription_pattern.ref)).then(r => r.json());
+const deliverySemantics = await fetch(uriToUrl(refs.delivery_semantics.ref)).then(r => r.json());
+const stream = compileStream({ eventType, schema, channel, subscriptionPattern, deliverySemantics });`}</code></pre>
+
+  <h2>Compatibility rules</h2>
+  <p>Rules in <a href="/exports/catalog.json"><code>/exports/catalog.json</code></a> (under the <code>rules</code>
+  key) declare predicates over atoms. Example: <code>delivery-semantics/exactly-once</code> requires
+  a channel with <code>partitioning: keyed</code>. A composition that violates a
+  <code>require</code>-effect rule is malformed.</p>
+
+  <h2>Schema evolution</h2>
+  <p>v0.1 ships the catalog and its JSON Schema; schema evolution rules (backward-compatible changes,
+  breaking changes, migration paths) are tracked via <code>schema-evolution</code> rule atoms and
+  enforced in CI via <code>python3 scripts/validate.py</code>.</p>
+</Base>

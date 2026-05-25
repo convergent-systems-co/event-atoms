@@ -1,0 +1,95 @@
+---
+import Base from "../../../layouts/Base.astro";
+import catalog from "../../../../public/exports/catalog.json";
+
+export function getStaticPaths() {
+  return catalog.atoms.map((atom: any) => ({
+    params: { type: atom.type, id: atom.id },
+    props: { atom },
+  }));
+}
+
+const { atom } = Astro.props;
+
+// Pick the type-specific payload
+const eventType = atom.event_type;
+const schema = atom.schema;
+const channel = atom.channel;
+const subscriptionPattern = atom.subscription_pattern;
+const deliverySemantics = atom.delivery_semantics;
+---
+<Base title={atom.name} description={atom.description ?? `${atom.type} atom`}>
+  <p><a href="/atoms/">← All atoms</a></p>
+  <h1>{atom.name}</h1>
+  <p style="color: var(--muted);">
+    <code>{atom.type}</code> · <code>v{atom.version}</code>
+  </p>
+
+  {atom.description && <p>{atom.description}</p>}
+
+  {atom.tags && atom.tags.length > 0 && (
+    <p>
+      Tags: {atom.tags.map((tag: string) => (
+        <span style="display: inline-block; font-size: 0.875rem; background: #f4ece4; padding: 0.125rem 0.5rem; border-radius: 0.25rem; margin-right: 0.25rem;">{tag}</span>
+      ))}
+    </p>
+  )}
+
+  {eventType && (
+    <section>
+      <h2>Event type</h2>
+      <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 1rem;">
+        {eventType.category && (<><dt>Category</dt><dd><code>{eventType.category}</code></dd></>)}
+        {eventType.payload_schema && (<><dt>Payload schema</dt><dd><code>{eventType.payload_schema}</code></dd></>)}
+        {eventType.idempotency && (<><dt>Idempotency</dt><dd><code>{eventType.idempotency}</code></dd></>)}
+      </dl>
+    </section>
+  )}
+
+  {schema && (
+    <section>
+      <h2>Schema</h2>
+      <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 1rem;">
+        {schema.format && (<><dt>Format</dt><dd><code>{schema.format}</code></dd></>)}
+        {schema.version_strategy && (<><dt>Version strategy</dt><dd><code>{schema.version_strategy}</code></dd></>)}
+        {schema.registry && (<><dt>Registry</dt><dd>{schema.registry}</dd></>)}
+      </dl>
+    </section>
+  )}
+
+  {channel && (
+    <section>
+      <h2>Channel</h2>
+      <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 1rem;">
+        {channel.type && (<><dt>Type</dt><dd><code>{channel.type}</code></dd></>)}
+        {channel.platform && (<><dt>Platform</dt><dd>{channel.platform}</dd></>)}
+        {channel.partitioning && (<><dt>Partitioning</dt><dd><code>{channel.partitioning}</code></dd></>)}
+      </dl>
+    </section>
+  )}
+
+  {subscriptionPattern && (
+    <section>
+      <h2>Subscription pattern</h2>
+      <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 1rem;">
+        {subscriptionPattern.model && (<><dt>Model</dt><dd><code>{subscriptionPattern.model}</code></dd></>)}
+        {subscriptionPattern.filter && (<><dt>Filter</dt><dd><code>{subscriptionPattern.filter}</code></dd></>)}
+        {subscriptionPattern.replay && (<><dt>Replay</dt><dd>{subscriptionPattern.replay ? "yes" : "no"}</dd></>)}
+      </dl>
+    </section>
+  )}
+
+  {deliverySemantics && (
+    <section>
+      <h2>Delivery semantics</h2>
+      <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 1rem;">
+        {deliverySemantics.guarantee && (<><dt>Guarantee</dt><dd><code>{deliverySemantics.guarantee}</code></dd></>)}
+        {deliverySemantics.ordering && (<><dt>Ordering</dt><dd><code>{deliverySemantics.ordering}</code></dd></>)}
+        {deliverySemantics.retry_policy && (<><dt>Retry policy</dt><dd><code>{deliverySemantics.retry_policy}</code></dd></>)}
+      </dl>
+    </section>
+  )}
+
+  <h2>Raw atom</h2>
+  <p><a href={`/atoms/${atom.type}/${atom.id}.json`}>/atoms/{atom.type}/{atom.id}.json</a> · <a href="/schemas/atom-v1.json">schema</a></p>
+</Base>

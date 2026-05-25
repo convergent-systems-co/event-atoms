@@ -1,0 +1,55 @@
+---
+import Base from "../../layouts/Base.astro";
+import catalog from "../../../public/exports/catalog.json";
+
+export function getStaticPaths() {
+  return catalog.compositions.map((composition: any) => ({
+    params: { id: composition.id },
+    props: { composition },
+  }));
+}
+
+const { composition } = Astro.props;
+const refs = composition.references ?? {};
+
+type Ref = { ref: string; version: string };
+
+function refEntries(val: Ref | Ref[] | undefined): Ref[] {
+  if (!val) return [];
+  return Array.isArray(val) ? val : [val];
+}
+
+const sections: Array<{ label: string; values: Ref[] }> = [
+  { label: "Event type", values: refEntries(refs.event_type) },
+  { label: "Schema", values: refEntries(refs.schema) },
+  { label: "Channel", values: refEntries(refs.channel) },
+  { label: "Subscription pattern", values: refEntries(refs.subscription_pattern) },
+  { label: "Delivery semantics", values: refEntries(refs.delivery_semantics) },
+];
+---
+<Base title={composition.name} description={composition.description}>
+  <p><a href="/streams/">← All streams</a></p>
+  <h1>{composition.name}</h1>
+  <p style="color: var(--muted);">
+    <code>stream</code> · <code>v{composition.version}</code>
+  </p>
+
+  {composition.description && <p>{composition.description}</p>}
+
+  <h2>References</h2>
+  {sections.map(section => section.values.length > 0 && (
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="margin-bottom: 0.5rem;">{section.label}</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+        {section.values.map((r: Ref) => (
+          <code style="background: #f4ece4; padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-size: 0.875rem;">
+            {r.ref} @ v{r.version}
+          </code>
+        ))}
+      </div>
+    </div>
+  ))}
+
+  <h2>Raw composition</h2>
+  <p><a href={`/streams/${composition.id}.json`}>/streams/{composition.id}.json</a> · <a href="/schemas/composition-v1.json">schema</a></p>
+</Base>

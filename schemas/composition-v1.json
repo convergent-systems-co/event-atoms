@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://event-atoms.com/schemas/composition-v1.json",
+  "title": "event-atoms v1 stream composition",
+  "description": "An event stream composes event-types, channels, subscription patterns, and delivery semantics into a named, deployable event flow.",
+  "type": "object",
+  "required": ["schema", "type", "id", "version", "name", "references"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "https://event-atoms.com/schemas/composition-v1.json"
+    },
+    "type": {
+      "type": "string",
+      "const": "stream"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9/-]{1,126}[a-z0-9]$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1, "maxLength": 40},
+      "uniqueItems": true
+    },
+    "references": {
+      "type": "object",
+      "required": ["event_type", "channel"],
+      "additionalProperties": false,
+      "properties": {
+        "event_type": {"$ref": "#/$defs/ref"},
+        "channel": {"$ref": "#/$defs/ref"},
+        "subscription_pattern": {"$ref": "#/$defs/ref"},
+        "delivery_semantics": {"$ref": "#/$defs/ref"}
+      }
+    }
+  },
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "required": ["ref", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "ref": {
+          "type": "string",
+          "pattern": "^event-atoms://atoms/[a-z-]+(?:/[a-z0-9/-]+)?$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$"
+        }
+      }
+    }
+  }
+}

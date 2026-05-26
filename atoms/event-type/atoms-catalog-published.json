@@ -1,0 +1,12 @@
+{
+  "schema": "https://event-atoms.com/schemas/atom-v1.json",
+  "type": "event-type",
+  "id": "event-atoms/event-type/atoms-catalog-published",
+  "version": "1.0.0",
+  "name": "Atoms Catalog Published",
+  "description": "Emitted when a *-atoms catalog releases a new version tag. Triggers downstream consumers to refresh their catalog cache.",
+  "delivery_guarantee": "at-least-once",
+  "ordering": "fifo",
+  "retention_hours": 168,
+  "tags": ["atoms", "catalog", "release", "publish"]
+}

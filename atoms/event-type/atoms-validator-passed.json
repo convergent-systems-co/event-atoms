@@ -1,0 +1,12 @@
+{
+  "schema": "https://event-atoms.com/schemas/atom-v1.json",
+  "type": "event-type",
+  "id": "event-atoms/event-type/atoms-validator-passed",
+  "version": "1.0.0",
+  "name": "Atoms Validator Passed",
+  "description": "Emitted when the atoms catalog validator (validate_atoms.py or equivalent) completes with exit code 0. Signals that all atoms in the catalog are structurally valid.",
+  "delivery_guarantee": "at-most-once",
+  "ordering": "unordered",
+  "retention_hours": 24,
+  "tags": ["atoms", "validation", "ci", "quality"]
+}

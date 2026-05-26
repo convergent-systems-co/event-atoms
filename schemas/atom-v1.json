@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://event-atoms.com/schemas/atom-v1.json",
+  "title": "event-atoms v1 atom",
+  "description": "A single atom in the event-atoms catalog. Discriminated by `type`.",
+  "type": "object",
+  "required": ["schema", "type", "id", "version", "name"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "https://event-atoms.com/schemas/atom-v1.json"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["event-type", "schema", "channel", "subscription-pattern", "delivery-semantics"]
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9/-]{1,126}[a-z0-9]$",
+      "description": "Stable, URL-safe identifier. Recommended form: <catalog>/<type>/<slug>."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "payload_schema": {
+      "type": "string",
+      "description": "Reference to a schema atom ID or an absolute JSON Schema URL."
+    },
+    "delivery_guarantee": {
+      "type": "string",
+      "enum": ["at-most-once", "at-least-once", "exactly-once"]
+    },
+    "ordering": {
+      "type": "string",
+      "enum": ["unordered", "fifo", "partitioned-fifo"]
+    },
+    "retention_hours": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "How long the broker retains unconsumed messages, in hours."
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1, "maxLength": 40},
+      "uniqueItems": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"type": {"const": "event-type"}}},
+      "then": {"required": ["delivery_guarantee", "ordering"]}
+    },
+    {
+      "if": {"properties": {"type": {"const": "channel"}}},
+      "then": {"required": ["delivery_guarantee", "ordering"]}
+    }
+  ]
+}

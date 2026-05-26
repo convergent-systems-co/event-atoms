@@ -1,0 +1,12 @@
+{
+  "schema": "https://event-atoms.com/schemas/atom-v1.json",
+  "type": "event-type",
+  "id": "event-atoms/event-type/github-pr-merged",
+  "version": "1.0.0",
+  "name": "GitHub PR Merged",
+  "description": "Emitted by GitHub Actions when a pull request merges to a protected branch. Primary trigger for deploy workflows and catalog update pipelines.",
+  "delivery_guarantee": "at-least-once",
+  "ordering": "fifo",
+  "retention_hours": 720,
+  "tags": ["github", "ci-cd", "trigger", "deploy"]
+}

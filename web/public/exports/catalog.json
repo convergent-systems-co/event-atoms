@@ -2,7 +2,7 @@
   "catalog": "event-atoms",
   "version": "0.1.0",
   "spec_version": "atoms-spec/v1.1.0",
-  "built_at": "2026-05-26T15:15:34+00:00",
+  "built_at": "2026-05-26T20:21:03+00:00",
   "atoms": [
     {
       "schema": "https://event-atoms.com/schemas/atom-v1.json",
@@ -56,6 +56,103 @@
       ]
     }
   ],
-  "compositions": [],
+  "compositions": [
+    {
+      "schema": "https://event-atoms.com/schemas/composition-v1.json",
+      "type": "stream",
+      "id": "event-atoms/streams/atoms-catalog-deploy-flow",
+      "version": "1.0.0",
+      "name": "Atoms Catalog Deploy Flow",
+      "description": "Cross-system flow: PR merged to main triggers catalog rebuild, validator run, and site deployment.",
+      "references": {
+        "event_type": {
+          "ref": "event-atoms://atoms/event-type/github-pr-merged",
+          "version": "1.0.0"
+        },
+        "channel": {
+          "ref": "event-atoms://atoms/channel/github-actions-webhook",
+          "version": "1.0.0"
+        },
+        "subscription_pattern": {
+          "ref": "event-atoms://atoms/subscription-pattern/filter-by-branch",
+          "version": "1.0.0"
+        },
+        "delivery_semantics": {
+          "ref": "event-atoms://atoms/delivery-semantics/at-least-once-fifo",
+          "version": "1.0.0"
+        }
+      },
+      "tags": [
+        "atoms",
+        "ci-cd",
+        "deploy",
+        "catalog"
+      ]
+    },
+    {
+      "schema": "https://event-atoms.com/schemas/composition-v1.json",
+      "type": "stream",
+      "id": "event-atoms/streams/olympus-agent-session-flow",
+      "version": "1.0.0",
+      "name": "Olympus Agent Session Flow",
+      "description": "Event stream for an Olympus agent session: start, tool dispatches, policy checks, and completion.",
+      "references": {
+        "event_type": {
+          "ref": "event-atoms://atoms/event-type/agent-session-started",
+          "version": "1.0.0"
+        },
+        "channel": {
+          "ref": "event-atoms://atoms/channel/olympus-broker-internal",
+          "version": "1.0.0"
+        },
+        "subscription_pattern": {
+          "ref": "event-atoms://atoms/subscription-pattern/session-lifecycle",
+          "version": "1.0.0"
+        },
+        "delivery_semantics": {
+          "ref": "event-atoms://atoms/delivery-semantics/exactly-once-fifo",
+          "version": "1.0.0"
+        }
+      },
+      "tags": [
+        "olympus",
+        "agent",
+        "session",
+        "policy"
+      ]
+    },
+    {
+      "schema": "https://event-atoms.com/schemas/composition-v1.json",
+      "type": "stream",
+      "id": "event-atoms/streams/schema-validation-flow",
+      "version": "1.0.0",
+      "name": "Schema Validation Flow",
+      "description": "Event flow emitted when atoms are validated against their schemas: validates, passes or fails, reports.",
+      "references": {
+        "event_type": {
+          "ref": "event-atoms://atoms/event-type/atoms-catalog-published",
+          "version": "1.0.0"
+        },
+        "channel": {
+          "ref": "event-atoms://atoms/channel/atoms-validator-pipeline",
+          "version": "1.0.0"
+        },
+        "subscription_pattern": {
+          "ref": "event-atoms://atoms/subscription-pattern/on-catalog-publish",
+          "version": "1.0.0"
+        },
+        "delivery_semantics": {
+          "ref": "event-atoms://atoms/delivery-semantics/at-least-once-unordered",
+          "version": "1.0.0"
+        }
+      },
+      "tags": [
+        "validation",
+        "schema",
+        "catalog",
+        "quality"
+      ]
+    }
+  ],
   "rules": []
 }
